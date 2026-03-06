@@ -35,14 +35,35 @@ replace cit_3=0 if citizen != 3
 * Cit_3 refers to not american citizens
 
 
+
 * Take the log of income as a response variable
 gen log_inctot = ln(inctot)
 
+* Race indicators, dummy encoded
+gen asian = racasian - 1
+gen amind = racamind - 1
+gen black = racblk - 1
+gen pacis = racpacis - 1
+gen white = racwht - 1
+gen other = racother - 1
 
-* Regress log of income on degree, age, sex, and citizenship status. Cit_1 refers to 
+* Employement status, dummy encoded
+gen is_not_in_labor_force = 1 if empstat ==3
+replace is_not_in_labor_force=0 if empstat != 3
+
+gen is_unemployed = 1 if empstat ==2
+replace is_unemployed=0 if empstat != 2
+
+* Regress log of income on degree, age, sex, and citizenship status. 
+*The basic model is this
+reg log_inctot degree age sex cit_1 cit_2 yrsusa1
+
+
+* Alternate model
 reg log_inctot degree age sex cit_1 cit_2 yrsusa1
 
 
 *outreg2 using basic_model_IRDD.doc, word
+
 
 
