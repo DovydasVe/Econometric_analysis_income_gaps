@@ -43,6 +43,6 @@ gen log_inctot = ln(inctot)
 reg log_inctot degree age sex cit_1 cit_2 yrsusa1
 
 
-*outreg2 using basic_model_IRDD.doc, word
+* outreg2 using basic_model_IRDD.doc, word
 
 
