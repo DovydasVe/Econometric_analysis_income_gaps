@@ -21,7 +21,7 @@ recode educ (0/2 = 0) (3/5 = 1) (6 = 2) (7/8 = 3) (9/11 = 4), gen(degree)
 
 
 gen cit_1 = 1 if citizen == 0 | citizen == 1
-replace cit_1=0 if citizen != 0 | citizen != 1
+replace cit_1=0 if citizen == 2 | citizen == 3
 
 gen cit_2 = 1 if citizen ==2
 replace cit_2=0 if citizen != 2
@@ -44,4 +44,5 @@ reg log_inctot degree age sex cit_1 cit_2 yrsusa1
 
 
 *outreg2 using basic_model_IRDD.doc, word
+
 
