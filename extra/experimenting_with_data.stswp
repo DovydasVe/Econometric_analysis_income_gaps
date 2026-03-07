@@ -1,0 +1,125 @@
+* Load the dataset
+use "C:\Users\ignas\Downloads\assignment_data.dta" 
+* Filter for Pennsylvania
+keep if stateicp==14
+* Filter for appropriate age groups
+drop if age>64
+drop if age<18
+* Positive total income
+drop if inctot<0
+* Check the categories in education, recode them for degree
+label list EDUC
+recode educ (0/2 = 0) (3/5 = 1) (6 = 2) (7/8 = 3) (9/11 = 4), gen(degree)
+* Generate dummy variables for citizen categories, merge those born abroad
+* with American citizens.
+gen cit_1 = 1 if citizen == 0 | citizen == 1
+replace cit_1=0 if citizen == 2 | citizen == 3
+gen cit_2 = 1 if citizen ==2
+replace cit_2=0 if citizen != 2
+gen cit_3 = 1 if citizen ==3
+replace cit_3=0 if citizen != 3
+* Cit_1 refers to American Citizens, either born in US or to American parents
+* Cit_2 refers to naturalized citizens in the US
+* Cit_3 refers to not american citizens
+* Take the log of income as a response variable
+gen log_inctot = ln(inctot)
+* Regress log of income on degree, age, sex, and citizenship status. Cit_1 refers to 
+reg log_inctot degree age sex cit_1 cit_2 yrsusa1
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1
+median inctot
+summarize inctot
+summarize inctot, detail
+hist inctot
+hist log_inctot
+browse
+hist density
+hist density
+hist desnity
+hist density
+summary density
+summarize desnity
+summarize density
+summarize density, detail
+hist density
+sort x
+gen cumprob = sum(density)
+replace cumprob = cumprob / cumprob[_N]
+drop cumprob
+sort density
+gen cumprob = sum(density)
+replace cumprob = cumprob / cumprob[_N]
+* Step 1: define the cutoff value
+local cutoff = (0.5637619 + 0.5638783) / 2
+* Step 2: generate the dummy variable
+gen big_city = (cumprob > `cutoff')
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city
+local_cutoff = (0.7926005 + 0.7928035)/2
+local cutoff = (0.7926005 + 0.7928035) / 2
+gen big_city = (cumprob > `cutoff')
+drop big_city
+gen big_city = (cumprob > `cutoff')
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city empstat
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat
+gen asian = racasian - 1
+gen amind = racamind - 1
+gen black = racblk - 1
+gen pacis = racpacis - 1
+gen white = racwht - 1
+gen other = racother - 1
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other
+gen immyear = cit_3 * yrimmig
+gen natyear = cit_2 * ymatur
+gen natyear = cit_2 * yrnatur
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear
+gen sq_age = age * age
+reg log_inctot degree sq_age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear
+gen three_age = age * age *age
+reg log_inctot degree three_age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear
+drop sq_age
+drop three_age
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear hhwt
+reg log_inctot degree three_age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear marst hhwt
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear hhwt marst
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear hhwt i.marst
+summarize bpl
+label list BPL
+lable list BPLD
+label list BPLD
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstatd asian amind black pacis white other immyear natyear hhwt i.marst
+gen big_degree = big_city * degree
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear hhwt i.marst big_degree
+gen big_hhwt = big_city * hhwt
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear hhwt i.marst big_hhwt
+gen immi_hhwt = cit_3 * big_city
+summarize cit_2, detail
+sum(cit_2)
+describe cit_2
+tabulate citizen
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear hhwt i.marst iimi_hhwt
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear hhwt i.marst immi_hhwt
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear i.marst immi_hhwt
+gen natur_yrs = cit_2 * yrsusa1
+gen immi_yrs = cit_3 * yrsusa1
+reg log_inctot degree age i.sex cit_1 big_city i.empstat asian amind black pacis white other immyear natyear i.marst natur_yrs immi_yrs
+label list DEGFIELD
+label list DEGFIELDD
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear i.marst degfield
+reg log_inctot degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear i.marst degfieldd
+reg log_inctot i.degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear i.marst degfieldd
+gen big_degree_white = big_city * i.degree * white
+gen big_degree_white = big_city * degree * white
+gen big_degree_asian = big_city * degree * asian
+reg log_inctot i.degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other immyear natyear i.marst degfieldd big_degree_white big_degree_asian
+gen sq_immyear = immyear * immyear
+reg log_inctot i.degree age i.sex cit_1 cit_2 yrsusa1 big_city i.empstat asian amind black pacis white other sq_immyear natyear i.marst degfieldd big_degree_white big_degree_asian
+reg log_inctot i.degree age i.sex cit_1 cit_2 yrusa1
+reg log_inctot i.degree age i.sex cit_1 cit_2 yrsusa1
+reg log_inctot i.degree age i.sex cit_1 cit_2 yrusa1 big_city
+reg log_inctot i.degree age i.sex cit_1 cit_2 yrsusa1 big_city
+reg log_inctot i.degree age i.sex cit_1 cit_2 sq_yrsusa1 big_city
+gen sq_yrsusa1 = yrsusa1 * yrsusa1
+reg log_inctot i.degree age i.sex cit_1 cit_2 sq_yrsusa1 big_city
+reg log_inctot i.degree age i.sex cit_1 cit_2 sq_yrsusa1 big_city degfieldd
+reg log_inctot i.degree age i.sex cit_1 cit_2 sq_yrsusa1 big_city degfieldd i.empstat
+reg log_inctot i.degree age i.sex cit_1 cit_2 big_city i.empstat
