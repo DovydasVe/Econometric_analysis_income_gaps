@@ -1,5 +1,6 @@
 * Load the dataset
-use "C:\Users\ignas\Downloads\assignment_data.dta" 
+use "assignment_data.dta"
+
 * Filter for Pennsylvania
 keep if stateicp==14
 * Filter for appropriate age groups
